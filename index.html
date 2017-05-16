@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--using socket.io and jquery-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <meta charset="UTF-8">
+    <!--the head-->
+    <title>Morse Code Decoder</title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>Morse Code Decoder</th>
+    </tr>
+</table>
+<table>
+    <tr>
+        display current word
+    </tr>
+    <tr>
+        <!--a place to show the current words that received from server-->
+        <p id = "word"></p>
+    </tr>
+</table>
+<table>
+    <tr>
+        display whole sentence
+    </tr>
+    <tr>
+        <!--a place to show the overall sentence received from server-->
+        <p id = "sentence"></p>
+    </tr>
+</table>
+</body>
+
+<!--declare variable to store the data received from server and initialice the data--><script>
+    var word = '';
+    var sentence = '';
+    document.getElementById("word").innerHTML = 'this section intend to display current word that is receiving from server';
+    document.getElementById("sentence").innerHTML = 'this section intend to display whole message thathas been received from server';
+</script>
+
+<script>
+    $(function(){
+        var client = io.connect('http://localhost:8080');
+        //using socket to get letter from server, stored in the word varoable and display it
+        client.on("output", function(data){
+            word = word + data.output;
+            document.getElementById("word").innerHTML = word;
+        });
+        //if a space received it means:it is end of a word, append the word to sentence, and empty the word
+        client.on("space", function(){
+            sentence = sentence + ' ' + word;
+            word = '';
+            document.getElementById("sentence").innerHTML = sentence;
+        });
+    });
+</script>
+
+</html>
